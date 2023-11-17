@@ -1,4 +1,26 @@
 import streamlit as st
+import hashlib
+users = {
+    "admin": hashlib.sha256("password".encode()).hexdigest(),
+    "user1": hashlib.sha256("securepassword1".encode()).hexdigest()
+}
+username = st.text_input("Username:")
+password = st.text_input("Password:", type="password")
+## Login Details ##
+if st.button("Login"):
+    if username in users and users[username] == hashlib.sha256(password.encode()).hexdigest():
+        # Valid credentials, handle successful login
+        st.success("Login successful!")
+        # Set logged_in flag to True for further conditional rendering
+        logged_in = True
+    else:
+        # Invalid credentials, display error message
+        st.error("Invalid username or password.")
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+
+
+import streamlit as st
 import pandas as pd
 import plotly.express as px
 from sklearn.preprocessing import LabelEncoder
