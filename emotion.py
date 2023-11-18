@@ -1,30 +1,37 @@
 import streamlit as st
-import pandas as pd
 
-# Load user data from CSV file
-data = pd.read_csv('path/to/your/csv/file.csv')
+# Define a dictionary to store user credentials
+user_credentials = {
+    'user1': 'password1',
+    'user2': 'password2',
+    # Add more usernames and passwords as needed
+}
 
-# Create a simple login page
-def login():
+# Function to check if the entered credentials are valid
+def authenticate(username, password):
+    stored_password = user_credentials.get(username)
+    if stored_password is not None and stored_password == password:
+        return True
+    return False
+
+# Streamlit app
+def main():
     st.title("Login Page")
+
+    # Input fields for username and password
     username = st.text_input("Username:")
     password = st.text_input("Password:", type="password")
 
+    # Login button
     if st.button("Login"):
-        authenticate(username, password)
+        if authenticate(username, password):
+            st.success(f"Welcome, {username}!")
+            # Add your logic for what to do after successful login
+        else:
+            st.error("Invalid username or password. Please try again.")
 
-# Authenticate user
-def authenticate(username, password):
-    user_data = data[(data['username'] == username) & (data['password'] == password)]
-
-    if not user_data.empty:
-        st.success("Login successful!")
-    else:
-        st.error("Invalid credentials. Please try again.")
-
-# Run the app
 if __name__ == '__main__':
-    login()
+    main()
 
 
 import streamlit as st
