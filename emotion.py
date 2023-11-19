@@ -87,6 +87,9 @@ def main():
             st.error("Invalid timestamp format. Please enter timestamps in the format: YYYY-MM-DD HH:MM:SS")
             return
 
+        # Convert the entire 'Timestamp' column to datetime objects
+        df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+
         # Filter data for the selected period
         selected_data = df[(df['Timestamp'] >= start_timestamp) & (df['Timestamp'] <= end_timestamp)]
 
