@@ -50,7 +50,7 @@ def main():
 
     # Display login page if not logged in
     if not st.session_state['is_logged_in']:
-        st.title("<b>Domestic Emotion Monitoring System</b>")
+        st.title("Domestic Emotion Monitoring System")
 
         # Input fields for username and password
         username = st.text_input("Username:")
@@ -61,7 +61,7 @@ def main():
             if authenticate(username, password):
                 st.session_state['is_logged_in'] = True
                 st.session_state['username'] = username
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("Invalid username or password. Please try again.")
 
@@ -77,9 +77,12 @@ def main():
         st.write(df)
 
         # User input for timestamp range
+        start_timestamp_str = st.sidebar.text_input("Select Start Timestamp (YYYY-MM-DD HH:MM:SS)", df['Timestamp'].iloc[0])
+        end_timestamp_str = st.sidebar.text_input("Select End Timestamp (YYYY-MM-DD HH:MM:SS)", df['Timestamp'].iloc[-1])
+
         try:
-            start_timestamp = pd.to_datetime(st.sidebar.text_input("Select Start Timestamp (YYYY-MM-DD HH:MM:SS)", df['Timestamp'].iloc[0]))
-            end_timestamp = pd.to_datetime(st.sidebar.text_input("Select End Timestamp (YYYY-MM-DD HH:MM:SS)", df['Timestamp'].iloc[-1]))
+            start_timestamp = pd.to_datetime(start_timestamp_str)
+            end_timestamp = pd.to_datetime(end_timestamp_str)
         except ValueError:
             st.error("Invalid timestamp format. Please enter timestamps in the format: YYYY-MM-DD HH:MM:SS")
             return
@@ -99,7 +102,7 @@ def main():
         # Logout option
         if st.button("Logout"):
             clear_session_state()
-            st.experimental_rerun()
+            st.rerun()
 
         # Add footnote to all pages
         st.markdown("<p style='text-align: center;'>This project is supported by All India Council for Technical Education (AICTE), Ministry of Education, India, Arm Education, and STMicroelectronics.<br>Developers: Charan Velavan, Ebi Manuel, Benie Jaison A T, and Akshay B<br>Mentor: M.Lingeshwaran<br>St. Joseph's College of Engineering, OMR, Chennai -119.</p>", unsafe_allow_html=True)
