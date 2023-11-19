@@ -29,9 +29,10 @@ def main():
     if st.button("Login"):
         if authenticate(username, password):
             st.success(f"Welcome, {username}!")
+
             # Clear the input fields after successful login
-            username = st.text_input("Username:", value="")
-            password = st.text_input("Password:", value="", type="password")
+            st.text_input("Username:", value="")
+            st.text_input("Password:", value="", type="password")
 
             # Load the CSV file
             @st.cache_data
