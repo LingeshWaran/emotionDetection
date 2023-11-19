@@ -24,8 +24,9 @@ def clear_session_state():
 
 # Function to load data from CSV
 @st.cache
-def load_data(uploaded_file):
-    data = pd.read_csv(uploaded_file)
+def load_data():
+    # Assuming "emotion_data.csv" is in the root of the Git repo
+    data = pd.read_csv("emotion_data.csv")
     return data
 
 # Function to preprocess data
@@ -68,39 +69,32 @@ def main():
     else:
         st.success(f"Welcome, {st.session_state['username']}!")
 
-        # Sidebar for file selection
-        uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
+        # Load the CSV file
+        df = load_data()
 
-        # Display data
-        if uploaded_file is not None:
-            df, label_encoder = preprocess_data(load_data(uploaded_file))
+        # Display raw data
+        st.subheader("Preprocessed Data")
+        st.write(df)
 
-            # Display raw data
-            st.subheader("Preprocessed Data")
-            st.write(df)
+        # User input for timestamp range
+        try:
+            start_timestamp = pd.to_datetime(st.sidebar.text_input("Select Start Timestamp (YYYY-MM-DD HH:MM:SS)", df['Timestamp'].iloc[0]))
+            end_timestamp = pd.to_datetime(st.sidebar.text_input("Select End Timestamp (YYYY-MM-DD HH:MM:SS)", df['Timestamp'].iloc[-1]))
+        except ValueError:
+            st.error("Invalid timestamp format. Please enter timestamps in the format: YYYY-MM-DD HH:MM:SS")
+            return
 
-            # User input for timestamp range
-            try:
-                start_timestamp = pd.to_datetime(st.sidebar.text_input("Select Start Timestamp (YYYY-MM-DD HH:MM:SS)", df['Timestamp'].iloc[0]))
-                end_timestamp = pd.to_datetime(st.sidebar.text_input("Select End Timestamp (YYYY-MM-DD HH:MM:SS)", df['Timestamp'].iloc[-1]))
-            except ValueError:
-                st.error("Invalid timestamp format. Please enter timestamps in the format: YYYY-MM-DD HH:MM:SS")
-                return
+        # Filter data for the selected period
+        selected_data = df[(df['Timestamp'] >= start_timestamp) & (df['Timestamp'] <= end_timestamp)]
 
-            # Filter data for the selected period
-            selected_data = df[(df['Timestamp'] >= start_timestamp) & (df['Timestamp'] <= end_timestamp)]
-
-            # Display emotions count for the selected period
-            if not selected_data.empty:
-                st.subheader(f"Emotion Counts for Period {start_timestamp} to {end_timestamp}")
-                filtered_counts = selected_data.groupby('Emotion')['Timestamp'].count().reset_index(name='Count')
-                fig = px.bar(filtered_counts, x='Emotion', y='Count', color='Emotion', title='Emotion Counts for the Selected Period')
-                st.plotly_chart(fig)
-            else:
-                st.warning("No data available for the selected period.")
-
+        # Display emotions count for the selected period
+        if not selected_data.empty:
+            st.subheader(f"Emotion Counts for Period {start_timestamp} to {end_timestamp}")
+            filtered_counts = selected_data.groupby('Emotion')['Timestamp'].count().reset_index(name='Count')
+            fig = px.bar(filtered_counts, x='Emotion', y='Count', color='Emotion', title='Emotion Counts for the Selected Period')
+            st.plotly_chart(fig)
         else:
-            st.info("Please upload a CSV file.")
+            st.warning("No data available for the selected period.")
 
         # Logout option
         if st.button("Logout"):
