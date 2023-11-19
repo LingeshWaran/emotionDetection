@@ -29,6 +29,10 @@ def main():
     if st.button("Login"):
         if authenticate(username, password):
             st.success(f"Welcome, {username}!")
+            # Clear the input fields after successful login
+            username = st.text_input("Username:", value="")
+            password = st.text_input("Password:", value="", type="password")
+
             # Load the CSV file
             @st.cache_data
             def load_data(file_path):
@@ -48,9 +52,7 @@ def main():
                 return df, label_encoder
 
             # Sidebar for file selection
-            #st.sidebar.header("Upload CSV")
-            #uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type=["csv"])
-            uploaded_file = "emotion_data.csv"
+            uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type=["csv"])
 
             # Display data
             if uploaded_file is not None:
@@ -84,8 +86,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
