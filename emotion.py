@@ -19,72 +19,88 @@ def authenticate(username, password):
 
 # Streamlit app
 def main():
-    st.title("Login Page")
+    # Check if user is logged in
+    if 'is_logged_in' not in st.session_state:
+        st.session_state['is_logged_in'] = False
 
-    # Input fields for username and password
-    username = st.text_input("Username:")
-    password = st.text_input("Password:", type="password")
+    # Display login page if not logged in
+    if not st.session_state['is_logged_in']:
+        st.title("<b>Domestic Emotion Monitoring System</b>")
 
-    # Login button
-    if st.button("Login"):
-        if authenticate(username, password):
-            st.success(f"Welcome, {username}!")
-            # Load the CSV file
-            @st.cache_data
-            def load_data(file_path):
-                data = pd.read_csv(file_path)
-                return data
+        # Input fields for username and password
+        username = st.text_input("Username:")
+        password = st.text_input("Password:", type="password")
 
-            # Preprocess the data
-            def preprocess_data(df):
-                df['Timestamp'] = pd.to_datetime(df['Timestamp'])
-                df['Date'] = df['Timestamp'].dt.date
-                df['Time'] = df['Timestamp'].dt.time
+        # Login button
+        if st.button("Login"):
+            if authenticate(username, password):
+                st.session_state['is_logged_in'] = True
+                st.experimental_rerun()
+            else:
+                st.error("Invalid username or password. Please try again.")
 
-                # Encode emotions using LabelEncoder
-                label_encoder = LabelEncoder()
-                df['Emotion_Encoded'] = label_encoder.fit_transform(df['Emotion'])
+    # Display main content if logged in
+    else:
+        st.experimental_set_page_config(
+            layout="wide",
+            title="Domestic Emotion Monitoring System"
+        )
+        st.success(f"Welcome, {username}!")
 
-                return df, label_encoder
+        # Load the CSV file
+        @st.cache_data
+        def load_data(file_path):
+            data = pd.read_csv(file_path)
+            return data
 
-            # Sidebar for file selection
-            #st.sidebar.header("Upload CSV")
-            #uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type=["csv"])
-            uploaded_file = "emotion_data.csv"
+        # Preprocess the data
+        def preprocess_data(df):
+            df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+            df['Date'] = df['Timestamp'].dt.date
+            df['Time'] = df['Timestamp'].dt.time
 
-            # Display data
-            if uploaded_file is not None:
-                df, label_encoder = preprocess_data(load_data(uploaded_file))
+            # Encode emotions using LabelEncoder
+            label_encoder = LabelEncoder()
+            df['Emotion_Encoded'] = label_encoder.fit_transform(df['Emotion'])
 
-                # Display raw data
-                st.subheader("Preprocessed Data")
-                st.write(df)
+            return df, label_encoder
 
-                # User input for timestamp range
-                start_timestamp = st.sidebar.text_input("Select Start Timestamp(YYYY-MM-DD HH:MM:SS)", df['Timestamp'].iloc[0])
-                end_timestamp = st.sidebar.text_input("Select End Timestamp(YYYY-MM-DD HH:MM:SS)", df['Timestamp'].iloc[-1])
+        # Sidebar for file selection
+        # st.sidebar.header("Upload CSV")
+        uploaded_file = "emotion_data.csv"
 
-                # Filter data for the selected period
-                selected_data = df[(df['Timestamp'] >= pd.to_datetime(start_timestamp)) & (df['Timestamp'] <= pd.to_datetime(end_timestamp))]
+        # Display data
+        if uploaded_file is not None:
+            df, label_encoder = preprocess_data(load_data(uploaded_file))
 
-                # Display emotions count for the selected period
-                if not selected_data.empty:
-                    st.subheader(f"Emotion Counts for Period {start_timestamp} to {end_timestamp}")
-                    filtered_counts = selected_data.groupby('Emotion')['Timestamp'].count().reset_index(name='Count')
-                    fig = px.bar(filtered_counts, x='Emotion', y='Count', color='Emotion', title='Emotion Counts for the Selected Period')
-                    st.plotly_chart(fig)
+            # Display raw data
+            st.subheader("Preprocessed Data")
+            st.write(df)
 
-                else:
-                    st.warning("No data available for the selected period.")
+            # User input for timestamp range
+            start_timestamp = st.sidebar.text_input("Select Start Timestamp(YYYY-MM-DD HH:MM:SS)", df['Timestamp'].iloc[0])
+            end_timestamp = st.sidebar.text_input("Select End Timestamp(YYYY-MM-DD HH:MM:SS)", df['Timestamp'].iloc[-1])
+
+            # Filter data for the selected period
+            selected_data = df[(df['Timestamp'] >= pd.to_datetime(start_timestamp)) & (df['Timestamp'] <= pd.to_datetime(end_timestamp))]
+
+            # Display emotions count for the selected period
+            if not selected_data.empty:
+                st.subheader(f"Emotion Counts for Period {start_timestamp} to {end_timestamp}")
+                filtered_counts = selected_data.groupby('Emotion')['Timestamp'].count().reset_index(name='Count')
+                fig = px.bar(filtered_counts, x='Emotion', y='Count', color='Emotion', title='Emotion Counts for the Selected Period')
+                st.plotly_chart(fig)
 
             else:
-                st.info("Please upload a CSV file.")
+                st.warning("No data available for the selected period.")
+
         else:
-            st.error("Invalid username or password. Please try again.")
+            st.info("Please upload a CSV file.")
 
-if __name__ == '__main__':
-    main()
+        # Logout option
+        if st.button("Logout"):
+            st.session_state['is_logged_in'] = False
+            st.experimental_rerun()
 
-
-
-
+        # Add footnote to all pages
+        st.markdown("<p style='text-align: center;'>This project is supported by All India Council for Technical Education (AICTE), Ministry of Education, India, Arm Education, and STMicroelectronics.<br>Developers: Charan Velavan, Ebi Manuel, Benie Jaison A T, and Akshay B<br>Mentor: M.Lingeshwaran<br>St. Joseph's College of Engineering, OMR, Chennai -119.</p>", unsafe_allow_html=True)
