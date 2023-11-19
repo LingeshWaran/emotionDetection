@@ -23,7 +23,7 @@ def clear_session_state():
     st.session_state['username'] = None
 
 # Function to load data from CSV
-@st.cache_data(allow_output_mutation=True)
+@st.cache(allow_output_mutation=True)
 def load_data():
     # Assuming "emotion_data.csv" is in the root of the Git repo
     data = pd.read_csv("emotion_data.csv")
