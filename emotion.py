@@ -31,7 +31,7 @@ def load_data():
 
 # Function to preprocess data
 def preprocess_data(df):
-    df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+    df['Timestamp'] = pd.to_datetime(df['Timestamp'])  # Convert the 'Timestamp' column to Timestamp objects
     df['Date'] = df['Timestamp'].dt.date
     df['Time'] = df['Timestamp'].dt.time
 
@@ -43,12 +43,12 @@ def preprocess_data(df):
 
 # Streamlit app
 def main():
-    # Check if user is logged in
+    # Check if the user is logged in
     if 'is_logged_in' not in st.session_state:
         st.session_state['is_logged_in'] = False
         st.session_state['username'] = None
 
-    # Display login page if not logged in
+    # Display the login page if not logged in
     if not st.session_state['is_logged_in']:
         st.title("Domestic Emotion Monitoring System")
 
@@ -76,9 +76,9 @@ def main():
         st.subheader("Preprocessed Data")
         st.write(df)
 
-        # User input for timestamp range
-        start_timestamp_str = st.sidebar.text_input("Select Start Timestamp (YYYY-MM-DD HH:MM:SS)", df['Timestamp'].iloc[0])
-        end_timestamp_str = st.sidebar.text_input("Select End Timestamp (YYYY-MM-DD HH:MM:SS)", df['Timestamp'].iloc[-1])
+        # User input for the timestamp range
+        start_timestamp_str = st.sidebar.text_input("Select Start Timestamp (YYYY-MM-DD HH:MM:SS)", str(df['Timestamp'].iloc[0]))
+        end_timestamp_str = st.sidebar.text_input("Select End Timestamp (YYYY-MM-DD HH:MM:SS)", str(df['Timestamp'].iloc[-1]))
 
         try:
             start_timestamp = pd.to_datetime(start_timestamp_str)
@@ -104,8 +104,8 @@ def main():
             clear_session_state()
             st.rerun()
 
-        # Add footnote to all pages
-        st.markdown("<p style='text-align: center;'>This project is supported by All India Council for Technical Education (AICTE), Ministry of Education, India, Arm Education, and STMicroelectronics.<br>Developers: Charan Velavan, Ebi Manuel, Benie Jaison A T, and Akshay B<br>Mentor: M.Lingeshwaran<br>St. Joseph's College of Engineering, OMR, Chennai -119.</p>", unsafe_allow_html=True)
+        # Add a footnote to all pages
+        st.markdown("<p style='text-align: center;'>This project is supported by All India Council for Technical Education (AICTE), Ministry of Education, India, Arm Education, and STMicroelectronics.<br>Developers: Charan Velavan, Ebi Manuel, Benie Jaison A T, and Akshay B<br>Mentor: M. Lingeshwaran<br>St. Joseph's College of Engineering, OMR, Chennai -119.</p>", unsafe_allow_html=True)
 
 # Run the app
 if __name__ == '__main__':
