@@ -17,12 +17,6 @@ def authenticate(username, password):
         return True
     return False
 
-# Streamlit app
-st.experimental_set_page_config(
-    layout="wide",
-    title="Domestic Emotion Monitoring System"
-)
-
 # Function to clear sensitive information from the session state
 def clear_session_state():
     st.session_state['is_logged_in'] = False
