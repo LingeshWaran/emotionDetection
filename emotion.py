@@ -23,14 +23,15 @@ def clear_session_state():
     st.session_state['username'] = None
 
 # Function to load data from CSV
-@st.cache
+@st.cache_data(allow_output_mutation=True)
 def load_data():
     # Assuming "emotion_data.csv" is in the root of the Git repo
     data = pd.read_csv("emotion_data.csv")
-    return data.copy()  # Return a copy to avoid mutability issues
+    return data
 
 # Function to preprocess data
 def preprocess_data(df):
+    df = df.copy()  # Clone the DataFrame to avoid mutability issues
     df['Timestamp'] = pd.to_datetime(df['Timestamp'])  # Convert the 'Timestamp' column to Timestamp objects
     df['Date'] = df['Timestamp'].dt.date
     df['Time'] = df['Timestamp'].dt.time
@@ -75,6 +76,9 @@ def main():
         # Load the CSV file
         df = load_data()
 
+        # Preprocess the data
+        df, label_encoder = preprocess_data(df)
+
         # Display raw data
         st.subheader("Preprocessed Data")
         st.write(df)
@@ -89,9 +93,6 @@ def main():
         except ValueError:
             st.error("Invalid timestamp format. Please enter timestamps in the format: YYYY-MM-DD HH:MM:SS")
             return
-
-        # Convert the entire 'Timestamp' column to datetime objects
-        df['Timestamp'] = pd.to_datetime(df['Timestamp'])
 
         # Filter data for the selected period
         selected_data = df[(df['Timestamp'] >= start_timestamp) & (df['Timestamp'] <= end_timestamp)]
