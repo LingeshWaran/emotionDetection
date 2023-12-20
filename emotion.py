@@ -28,12 +28,12 @@ def clear_session_state():
 # Function to display videos and blinking button
 def display_videos():
     # Video 1 - Original Video
-    st.subheader("Title: Original Video")
+    st.subheader("Original Video")
     v1_url = "v1.mp4"  # Assuming v1.mp4 is in the same directory
     st.video(v1_url, start_time=0)
 
     # Video 2 - Annotated Video
-    st.subheader("Title: Annotated Video")
+    st.subheader("Annotated Video")
     v2_url = "v2.mp4"  # Assuming v2.mp4 is in the same directory
     st.video(v2_url, start_time=0)
 
@@ -44,9 +44,6 @@ def display_videos():
 
 # Streamlit app
 def main():
-    # Add a footnote to all pages
-    st.markdown("<p style='text-align: center;'>Problem Statement ID:1416<br>Problem Statement Title: AI based Automatic alarm generation and dropping of payload at a particular object through a Drone.<br>Organization: Ministry of Defence<br>Grand finale of Smart India Hackathon 2023 - Software Edition.<br>This project is supported by Ministry of Defence and Ministry of Education, Government of India.<br>Domain Bucket: Disaster Management<br>Team Name: Cyber Spartans<br>Team Leader: Charan<br> Team Members: Akshay B, Alfred D, Tejaswin S, Prakriti Harith, and Thanisqka N<br>Mentor: M. Lingeshwaran<br>St. Joseph's College of Engineering, OMR, Chennai -119.</p>", unsafe_allow_html=True)
-
     # Title
     st.title("AI based Automatic alarm generation and dropping of payload at a particular object through a Drone")
 
@@ -61,17 +58,22 @@ def main():
             if authenticate(username, password):
                 st.session_state['is_logged_in'] = True
                 st.session_state['username'] = username
+                # Clear the login input fields
+                username = ""
+                password = ""
+                
+                # Trigger a rerun to refresh the page
+                st.experimental_rerun()
 
     # Display main content if logged in
     if st.session_state['is_logged_in']:
         st.success(f"Welcome, {st.session_state['username']}!")
 
-        # Logout option
-        if st.button("Logout"):
-            clear_session_state()
-
         # Display videos and blinking button
         display_videos()
+
+    # Add a footnote to all pages
+    st.markdown("<p style='text-align: center;'>Problem Statement ID:1416<br>Problem Statement Title: AI based Automatic alarm generation and dropping of payload at a particular object through a Drone.<br>Organization: Ministry of Defence<br>Grand finale of Smart India Hackathon 2023 - Software Edition.<br>This project is supported by Ministry of Defence and Ministry of Education, Government of India.<br>Domain Bucket: Disaster Management<br>Team Name: Cyber Spartans<br>Team Leader: Charan<br> Team Members: Akshay B, Alfred D, Tejaswin S, Prakriti Harith, and Thanisqka N<br>Mentor: M. Lingeshwaran<br>St. Joseph's College of Engineering, OMR, Chennai -119.</p>", unsafe_allow_html=True)
 
 # Run the app
 if __name__ == '__main__':
