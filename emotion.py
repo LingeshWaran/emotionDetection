@@ -27,8 +27,6 @@ def clear_session_state():
 
 # Function to display videos and blinking button
 def display_videos():
-    st.title("Video Playback")
-
     # Video 1 - Original Video
     st.subheader("Title: Original Video")
     v1_url = "v1.mp4"  # Assuming v1.mp4 is in the same directory
@@ -49,10 +47,11 @@ def main():
     # Add a footnote to all pages
     st.markdown("<p style='text-align: center;'>Problem Statement ID:1416<br>Problem Statement Title: AI based Automatic alarm generation and dropping of payload at a particular object through a Drone.<br>Organization: Ministry of Defence<br>Grand finale of Smart India Hackathon 2023 - Software Edition.<br>This project is supported by Ministry of Defence and Ministry of Education, Government of India.<br>Domain Bucket: Disaster Management<br>Team Name: Cyber Spartans<br>Team Leader: Charan<br> Team Members: Akshay B, Alfred D, Tejaswin S, Prakriti Harith, and Thanisqka N<br>Mentor: M. Lingeshwaran<br>St. Joseph's College of Engineering, OMR, Chennai -119.</p>", unsafe_allow_html=True)
 
+    # Title
+    st.title("AI based Automatic alarm generation and dropping of payload at a particular object through a Drone")
+
     # Display the login page if not logged in
     if not st.session_state['is_logged_in']:
-        st.title("AI based Automatic alarm generation and dropping of payload at a particular object through a Drone")
-
         # Input fields for username and password
         username = st.text_input("Username:")
         password = st.text_input("Password:", type="password")
